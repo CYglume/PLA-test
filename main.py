@@ -14,29 +14,5 @@ trainDT = pd.concat([trainDT_A, trainDT_B], axis=0)
 trainDT.reset_index(inplace=True, drop=True)
 
 
-
-# colors = {'A': 'red',
-#           'B': 'blue'}
-# trainDT['col'] = trainDT['col'].astype("category")
-
-print(trainDT.iloc(1))
-
-
 pla = PLA.PLAPercep(trainDT)
 pla.PLA()
-    
-
-
-
-
-
-
-
-    
-    
-    
-# PLA(trainDT)
-
-# print(col1)
-# trainDT.plot.scatter(x="x", y="y", c=col1)
-# plt.show()
