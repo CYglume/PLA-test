@@ -13,23 +13,22 @@ class PLAPercep:
             color = self.dt.col.map({-1: 'red', 1: 'blue'})
         return(color)
 
-    def ClasPlot(self,W,i):
-        # classification function: ax + by =0
+    def ClasPlot(self, W, i, org):
+        # classification function: y = y_o + m(x-x_o)
+        #                          0 = mx - y + (y_0 - mx_0)
         a = W[0]
         b = W[1]
+        slp = -a/b
         x = np.arange(-21, 21, 0.01)
         yM = 21
         ym = -21
-        print(a)
-        print(b)
-        print('slope = {}'.format(-a/b))
-        y1 = -(a/b)*x
-        y1[(y1<ym)] = ym
-        y1[(y1>yM)] = yM
+        print('W = {}'.format([a,b]))
+        print('slope = {}'.format(slp))
+        y1 = slp*(x - org[0]) + org[1]
         
-        # p1 = plt.plot(self.dt.x,self.dt.y, c = col1)
+        
         plt.scatter(self.dt.x,self.dt.y, c = self.colorSet())
-        plt.axline(xy1=(0,0), slope=-(a/b),
+        plt.axline(xy1=org, slope=-(a/b),
                    linestyle = '--', )
         plt.fill_between(x, y1, yM, facecolor = 'blue', alpha = 0.3)
         plt.fill_between(x, y1, ym, facecolor = 'red', alpha = 0.3)
@@ -39,8 +38,8 @@ class PLAPercep:
         plt.show()
 
         #Chekc the match to pre-classification
-        fit = a*self.dt.x + b*self.dt.y
-        chekcList = np.sign(fit) != self.dt.col
+        fit = slp*self.dt.x - self.dt.y + (org[1] - slp*org[0])
+        chekcList = np.sign(fit) == self.dt.col
         
         #see if complete classification
         if not any(chekcList == False):
@@ -55,25 +54,27 @@ class PLAPercep:
         Wt = W + Xt * yn
         print('||||----||||')
         print(Xt)
-        print(W + Xt)
+        print(W)
         print(Wt,yn)
         print('||||----||||')
         return(Wt, yn)
 
 
     def PLA(self):
-        W = [self.dt.x[1], self.dt.y[1]]
-        yn = 1
-        i = 0
-        while (yn) != 0:
-            W, yn = self.ClasPlot(W, i)
+        org = [self.dt.x.mean(), self.dt.y.mean()]
+        W   = [org[0] - self.dt.x[1], org[1] - self.dt.y[1]]
+        yn  = 1
+        i   = 0
+        for i in range(11):
+            W, yn = self.ClasPlot(W, i, org)
             print('W = {}'.format(W))
             print('yn = {}'.format(yn))
             print('i = {}'.format(i))
             print('----')
-            i += 1
-            if i > 11:
+            if (yn == 0):
+                print('End!')
                 break
+
 
 if __name__ == "__main__":
     PLAobj = PLAPercep(trainDT)

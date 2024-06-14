@@ -1,7 +1,7 @@
 import PLA
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
+
 
 def constructXY(org, radi, labelIn):
     angles = np.random.randint(360, size=(1,20))
@@ -14,7 +14,7 @@ def constructXY(org, radi, labelIn):
 
 
 a_origin = np.random.randint(-5,20)
-b_origin = np.random.randint(5,20)
+b_origin = np.random.randint(-20,5)
 r_define = 5 * np.random.random_sample((1, 20))
 
 
