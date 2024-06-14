@@ -2,17 +2,30 @@ import PLA
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import random
 
-trainDT_A = pd.DataFrame({'x': random.sample(range(-20,4), 10), 
-                         'y': random.sample(range(-20,4), 10),
-                         'col': np.repeat(-1,10)})
-trainDT_B = pd.DataFrame({'x': random.sample(range(-4,20), 10), 
-                         'y': random.sample(range(-4,20), 10),
-                         'col': np.repeat(1,10)})
-trainDT = pd.concat([trainDT_A, trainDT_B], axis=0)
-trainDT.reset_index(inplace=True, drop=True)
+def constructXY(org, radi, labelIn):
+    angles = np.random.randint(360, size=(1,20))
+    x = np.array(radi*np.cos(np.pi*angles/180), dtype=float)
+    x+=org
+    
+    y = np.array(radi*np.sin(np.pi*angles/180), dtype=float)
+    y+=org
+    return np.c_[x.T, y.T, np.full((20,1),labelIn)]
 
 
-pla = PLA.PLAPercep(trainDT)
+a_origin = np.random.randint(-5,20)
+b_origin = np.random.randint(5,20)
+r_define = 5 * np.random.random_sample((1, 20))
+
+
+
+XYa = constructXY(a_origin, r_define,-1)
+XYb = constructXY(b_origin, r_define,1)
+XY  = np.append(XYa, XYb, axis=0)
+XY  = pd.DataFrame({'x': XY[:, 0],
+                    'y': XY[:, 1],
+                    'col': XY[:, 2]})
+
+
+pla = PLA.PLAPercep(XY)
 pla.PLA()
