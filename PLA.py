@@ -26,46 +26,48 @@ class PLAPercep:
         print('slope = {}'.format(slp))
         y1 = slp*(x - org[0]) + org[1]
         
-        
+        plt.subplot(3, 4, i+1)
         plt.scatter(self.dt.x,self.dt.y, c = self.colorSet())
         plt.axline(xy1=org, slope=-(a/b),
                    linestyle = '--', )
         plt.fill_between(x, y1, yM, facecolor = 'blue', alpha = 0.3)
         plt.fill_between(x, y1, ym, facecolor = 'red', alpha = 0.3)
-        plt.text(-20, 20, 'i = %i'%(i), fontsize = 22)
         plt.xlim(-21,21)
         plt.ylim(-21,21)
-        plt.show()
+        plt.title("Iter " + str(i+1))
+
 
         #Chekc the match to pre-classification
         fit = slp*self.dt.x - self.dt.y + (org[1] - slp*org[0])
-        chekcList = np.sign(fit) == self.dt.col
-        
+        wrongList = np.sign(fit) == self.dt.col
+        wrongDist = abs(fit * wrongList)
+
         #see if complete classification
-        if not any(chekcList == False):
+        if not any(wrongList):
             return(0,0)
 
-        #sample one data from incorrect classification
-        ids = np.where(chekcList)[0].tolist()
-        idGet = random.sample(ids, 1)
-        
-        Xt = np.array([self.dt.x[idGet].item(), self.dt.y[idGet].item()])
-        yn = self.dt.col[idGet].item()
+        #Get the farthest point in the wrong side
+        wrongDT = self.dt[wrongDist == max(wrongDist)]
+
+
+        Xt = np.array(wrongDT.iloc[0,[0,1]])
+        yn = wrongDT.iloc[0,2]
         Wt = W + Xt * yn
         print('||||----||||')
         print(Xt)
+        print('kkkkkkkkkkkkkk')
         print(W)
-        print(Wt,yn)
+        print(yn)
         print('||||----||||')
         return(Wt, yn)
 
 
-    def PLA(self):
+    def PLA(self, iter = 11):
         org = [self.dt.x.mean(), self.dt.y.mean()]
         W   = [org[0] - self.dt.x[1], org[1] - self.dt.y[1]]
         yn  = 1
         i   = 0
-        for i in range(11):
+        for i in range(iter):
             W, yn = self.ClasPlot(W, i, org)
             print('W = {}'.format(W))
             print('yn = {}'.format(yn))
@@ -74,6 +76,10 @@ class PLAPercep:
             if (yn == 0):
                 print('End!')
                 break
+        
+        plt.subplots_adjust(hspace=0.5)
+        plt.suptitle("Subplot Test")
+        plt.show()
 
 
 if __name__ == "__main__":

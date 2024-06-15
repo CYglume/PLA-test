@@ -15,12 +15,12 @@ def constructXY(org, radi, labelIn):
 
 a_origin = np.random.randint(-5,20)
 b_origin = np.random.randint(-20,5)
-r_define = 5 * np.random.random_sample((1, 20))
+r_define = 10 * np.random.random_sample((1, 20))
 
 
 
-XYa = constructXY(a_origin, r_define,-1)
-XYb = constructXY(b_origin, r_define,1)
+XYa = constructXY(a_origin, r_define,1)
+XYb = constructXY(b_origin, r_define,-1)
 XY  = np.append(XYa, XYb, axis=0)
 XY  = pd.DataFrame({'x': XY[:, 0],
                     'y': XY[:, 1],
